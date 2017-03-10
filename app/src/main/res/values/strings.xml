@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">NearByRestaurant</string>
+    <string name="login">Login</string>
+    <string name="regiter">Register</string>
+    <string name="logout">Logout</string>
+    <string name="username">User Name</string>
+    <string name="name">Name</string>
+    <string name="email_addres">Email Address</string>
+    <string name="submit_user_info">Submit</string>
+    <string name="password">Password</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="not_register">Not registered yet?</string>
+    <string name="register">Register Now!</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="already_register">Already registered?</string>
+    <string name="login_user">Login Here!</string>
+    <string name="logged_user">welcome</string>
+</resources>
