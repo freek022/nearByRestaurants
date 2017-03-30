@@ -127,34 +127,9 @@ public class LoginActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-
-    @Override
-    public void finishProcess(List<User> result) {
-
-        for (User user : result){
-
-            String email = user.getEmail();
-            String password = user.getPassword();
-
-            String editEmail = editEmailAddress.getText().toString();
-            String editPwd = editPassword.getText().toString();
-
-            if (editEmail.matches(email) && editPwd.matches(password)) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-
-                Toast.makeText(getApplicationContext(), "welcome, " + user.getUserName(), Toast.LENGTH_LONG).show();
-            }
-        }
-
-    }
-
-    */
     public class EndpointsAyncTask extends AsyncTask<Void, Void, List<User>> {
         private Context context;
         private UserApi myApiService = null;
-        private AsyncResponse delegate;
         private ProgressDialog mDialog;
 
         public EndpointsAyncTask(Context context) {
@@ -212,14 +187,8 @@ public class LoginActivity extends AppCompatActivity {
 
             }
 
-
-            //delegate.finishProcess(users);
-
         }
 
+    }
 
-    }
-    public String userName(String userName){
-        return userName;
-    }
 }

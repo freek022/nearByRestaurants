@@ -15,4 +15,8 @@
     <string name="already_register">Already registered?</string>
     <string name="login_user">Login Here!</string>
     <string name="logged_user">welcome</string>
+    <string name="google_maps_key">AIzaSyA-I9gzltM0QkJB3OcoyaAcFPgHL7zOpN4</string>
+    <string name="place_details_activity">PlaceDetailsActivity</string>
+    <string name="register_user_activity">RegisterUserActivity</string>
 </resources>
+
