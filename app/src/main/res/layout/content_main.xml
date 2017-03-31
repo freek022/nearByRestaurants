@@ -20,4 +20,10 @@
         android:textSize="18sp"
         android:id="@+id/logged_user"/>
 
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logged_user"/>
+
 </RelativeLayout>
