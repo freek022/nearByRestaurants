@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnectionSuspended(int i) {
         Log.d(TAG, "Location services suspended");
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
     }
 
     @Override
@@ -185,7 +185,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-            handleNewLocation(location);
+
+        handleNewLocation(location);
     }
 
     @Override
@@ -305,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements
          * method that parses the JSON returned from the Googlep laces Api
          */
         private ArrayList parseGooglePlaces(final String result){
-            final ArrayList<Place> restaurant = new ArrayList();
+            final ArrayList<Place> restaurants = new ArrayList();
 
             try {
                 // make an jsonObject in order to parse the response
@@ -357,9 +358,9 @@ public class MainActivity extends AppCompatActivity implements
                             }
                         }
 
-                        restaurant.add(myRestaurant);
-                        for(int m = 0; m<restaurant.size(); m++){
-                            adapter = new RestaurantAdapter(MainActivity.this, restaurant);
+                        restaurants.add(myRestaurant);
+                        for(int m = 0; m<restaurants.size(); m++){
+                            adapter = new RestaurantAdapter(MainActivity.this, restaurants);
                             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -382,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements
                 e.printStackTrace();
                 return new ArrayList();
             }
-            return restaurant;
+            return restaurants;
         }
     }
 }
