@@ -88,4 +88,9 @@ public class Place {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    public void setLatLng(double lat, double lng) {
+        this.latitude = lat;
+        this.longitude = lng;
+    }
 }

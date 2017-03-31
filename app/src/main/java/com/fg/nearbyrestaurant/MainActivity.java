@@ -16,6 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements
     private String RESTAURANT ="restaurant";
 
     private TextView textView;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // initialize textView widget
         textView = (TextView) findViewById(R.id.logged_user);
-        textView.setText("welcome " + user);
+        //textView.setText("welcome " + user);
+        listView = (ListView) findViewById(R.id.list);
 
         // initialize GoogleApiClient
         buildGoogleApiClient();
@@ -299,6 +307,82 @@ public class MainActivity extends AppCompatActivity implements
         private ArrayList parseGooglePlaces(final String result){
             final ArrayList<Place> restaurant = new ArrayList();
 
+            try {
+                // make an jsonObject in order to parse the response
+                JSONObject jsonObject = new JSONObject(result);
+                // make an jsonObject in order to parse the response
+                if (jsonObject.has("results")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("results");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Place myRestaurant = new Place();
+                        if(jsonArray.getJSONObject(i).has("place_id")) {
+                            myRestaurant.setPlace_id(jsonArray.getJSONObject(i).optString("place_id"));
+                        }
+                        if (jsonArray.getJSONObject(i).has("name")) {
+                            myRestaurant.setNamePlace(jsonArray.getJSONObject(i).optString("name"));
+                            myRestaurant.setRating(jsonArray.getJSONObject(i).optString("rating", " "));
+                            if (jsonArray.getJSONObject(i).has("opening_hours")) {
+                                if (jsonArray.getJSONObject(i).getJSONObject("opening_hours").has("open_now")) {
+                                    if (jsonArray.getJSONObject(i).getJSONObject("opening_hours").getString("open_now").equals("true")) {
+                                        myRestaurant.setOpenNow("YES");
+                                    } else {
+                                        myRestaurant.setOpenNow("NO");
+                                    }
+                                }
+                            } else {
+                                myRestaurant.setOpenNow("Not Known");
+                            }
+                            if (jsonArray.getJSONObject(i).has("geometry"))
+                            {
+                                if (jsonArray.getJSONObject(i).getJSONObject("geometry").has("location"))
+                                {
+                                    if (jsonArray.getJSONObject(i).getJSONObject("geometry").getJSONObject("location").has("lat"))
+                                    {
+                                        myRestaurant.setLatLng(Double.parseDouble(jsonArray.getJSONObject(i)
+                                                .getJSONObject("geometry").getJSONObject("location")
+                                                .getString("lat")), Double.parseDouble(
+                                                jsonArray.getJSONObject(i).getJSONObject("geometry")
+                                                        .getJSONObject("location").getString("lng")));
+                                    }
+                                }
+                            }if (jsonArray.getJSONObject(i).has("vicinity")) {
+                                myRestaurant.setVicinity(jsonArray.getJSONObject(i).optString("vicinity"));
+                            }
+
+                            if (jsonArray.getJSONObject(i).has("types")) {
+                                JSONArray typesArray = jsonArray.getJSONObject(i).getJSONArray("types");
+                                for (int j = 0; j < typesArray.length(); j++) {
+                                    myRestaurant.setCategory(typesArray.getString(j) + ", " + myRestaurant.getCategory());
+                                }
+                            }
+                        }
+
+                        restaurant.add(myRestaurant);
+                        for(int m = 0; m<restaurant.size(); m++){
+                            adapter = new RestaurantAdapter(MainActivity.this, restaurant);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    // get id of the place from the list
+                                    String itemPlaceId = adapter.getItem(position).getPlace_id();
+
+                                    // initialise a PlaceDetailsActivity
+                                    Intent intent = new Intent(MainActivity.this, PlaceDetailsActivity.class);
+                                    // pass the place Id to the PlaceDetatilsActivity
+                                    intent.putExtra("place_id", itemPlaceId);
+                                    startActivity(intent);
+                                }
+                            });
+
+                            listView.setAdapter(adapter);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ArrayList();
+            }
+            return restaurant;
         }
     }
 }
