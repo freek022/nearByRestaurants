@@ -1,5 +1,9 @@
 package com.fg.nearbyrestaurant.model;
 
+import android.media.Image;
+
+import com.fg.nearbyrestaurant.R;
+
 /**
  * Created by fred on 3/30/2017.
  */
@@ -71,22 +75,6 @@ public class Place {
 
     public void setVicinity(String vicinity) {
         this.vicinity = vicinity;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
     }
 
     public void setLatLng(double lat, double lng) {

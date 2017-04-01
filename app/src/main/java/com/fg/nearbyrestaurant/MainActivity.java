@@ -1,8 +1,8 @@
 package com.fg.nearbyrestaurant;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        com.google.android.gms.location.LocationListener {
 
     public final static String TAG = MainActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_REQUEST_RESOLUTION = 9000;
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
         String user = getIntent().getStringExtra("user");
 
         // initialize textView widget
-        textView = (TextView) findViewById(R.id.logged_user);
+        //textView = (TextView) findViewById(R.id.logged_user);
         //textView.setText("welcome " + user);
         listView = (ListView) findViewById(R.id.list);
 
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements
         String msg = "Your Current location is "
                 +String.valueOf(mCurrentLocation.getLatitude()) +"\n"
                 +String.valueOf(mCurrentLocation.getLongitude());
-        // Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -143,7 +143,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(TAG, "Location services is connected");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission
+                .ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -153,22 +157,22 @@ public class MainActivity extends AppCompatActivity implements
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
         if (location != null){
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                    mLocationRequest, this);
 
             latitude = location.getLatitude();
-            latitude = location.getLongitude();
+            longitude =location.getLongitude();
             Double[] params = {latitude, longitude};
-            // pass params to RestaurantAsyTask to start searching for
-            // nearplaces
+
             new RestaurantAsyncTask().execute(params);
         } else {
             handleNewLocation(location);
         }
     }
+
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -178,8 +182,17 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "location services connection failed with code"
-        + connectionResult.getErrorCode());
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this,
+                        CONNECTION_FAILURE_REQUEST_RESOLUTION);
+            } catch (IntentSender.SendIntentException e){
+                e.printStackTrace();
+            }
+        } else {
+            Log.i(TAG, "Location services connection failed with code"
+                    + connectionResult.getErrorCode());
+        }
 
     }
 
@@ -187,21 +200,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
 
         handleNewLocation(location);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @Override
@@ -369,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements
 
                                     // initialise a PlaceDetailsActivity
                                     Intent intent = new Intent(MainActivity.this, PlaceDetailsActivity.class);
-                                    // pass the place Id to the PlaceDetatilsActivity
+                                    // pass the place Id to the PlaceDetailsActivity
                                     intent.putExtra("place_id", itemPlaceId);
                                     startActivity(intent);
                                 }
